@@ -38,15 +38,21 @@ var onAirCondition = function(event) {
   coapRequest.id = Math.floor(Math.random() * 65536);
 
   var requestOption = new CoapOption();
-  requestOption.option = coapOptionType.URL_PATH;
+  requestOption.option = coapOptionType.URI_PATH;
   requestOption.value = 'aircondition';
   requestOption.length = 12;
+  coapRequest.options.push(requestOption);
+
+  requestOption = new CoapOption();
+  requestOption.option = coapOptionType.URI_QUERY;
+  requestOption.value = 'open=true';
+  requestOption.length = 'open=true'.length;
   coapRequest.options.push(requestOption);
 
   coapRequest.optionCount = coapRequest.options.length;
 
   var sendBuffer = serialize(coapRequest, MACRO.iots.aircondition);
-  ws.send(sendBuffer);
+  ws.emit('aircondition', sendBuffer);
 };
 
 /**
@@ -60,15 +66,21 @@ var offAirCondition = function(event) {
   coapRequest.id = Math.floor(Math.random() * 65536);
 
   var requestOption = new CoapOption();
-  requestOption.option = coapOptionType.URL_PATH;
+  requestOption.option = coapOptionType.URI_PATH;
   requestOption.value = 'aircondition';
   requestOption.length = 12;
+  coapRequest.options.push(requestOption);
+
+  requestOption = new CoapOption();
+  requestOption.option = coapOptionType.URI_QUERY;
+  requestOption.value = 'open=false';
+  requestOption.length = 'open=false'.length;
   coapRequest.options.push(requestOption);
 
   coapRequest.optionCount = coapRequest.options.length;
 
   var sendBuffer = serialize(coapRequest, MACRO.iots.aircondition);
-  ws.send(sendBuffer);
+  ws.emit('aircondition', sendBuffer);
 };
 
 /**

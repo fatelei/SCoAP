@@ -28,6 +28,12 @@ var ws = null;
     obj.innerHTML = '<p>Current Temperature is:' + data.curtemperature + '</p>';
   });
 
+  ws.on('aircondition', function(data) {
+    var obj = document.getElementById('aircondition');
+    var rst = JSON.parse(data.data);
+    obj.innerHTML = '<p>The status of aircondition is:' + rst.data + '</p>';
+  });
+
   document.addEventListener("DOMContentLoaded", function(e){
     initEventListener();
   });
