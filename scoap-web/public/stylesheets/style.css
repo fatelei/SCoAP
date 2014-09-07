@@ -1,0 +1,30 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+button {
+  height: 40px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#temperature {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  border: 1px dashed;
+  padding-left: 10px;
+}
+
+#aircondition {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  border: 1px dashed;
+  padding-left: 10px;
+}
