@@ -9,7 +9,7 @@ var fetchTemperature = function(event) {
   coapRequest.id = Math.floor(Math.random() * 65536);
 
   var requestOption = new CoapOption();
-  requestOption.option = coapOptionType.URL_PATH;
+  requestOption.option = coapOptionType.URI_PATH;
   requestOption.value = 'temperature';
   requestOption.length = 11;
   coapRequest.options.push(requestOption);
@@ -17,7 +17,7 @@ var fetchTemperature = function(event) {
   coapRequest.optionCount = coapRequest.options.length;
 
   var sendBuffer = serialize(coapRequest, MACRO.iots.temperature);
-  ws.send(sendBuffer);
+  ws.emit('temperature', sendBuffer);
 };
 
 /**

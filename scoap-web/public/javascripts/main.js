@@ -23,6 +23,11 @@ var ws = null;
     console.log(data);
   });
 
+  ws.on('temperature', function(data) {
+    var obj = document.getElementById('temperature');
+    obj.innerHTML = '<p>Current Temperature is:' + data.curtemperature + '</p>';
+  });
+
   document.addEventListener("DOMContentLoaded", function(e){
     initEventListener();
   });

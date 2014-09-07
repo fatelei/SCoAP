@@ -9,6 +9,8 @@
   "author": "",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "socket.io": "1.1.0"
+    "socket.io": "1.1.0",
+    "coap-message": "git+ssh://git@github.com:fatelei/coap-message.git",
+    "coapjs": "git+ssh://git@github.com:fatelei/coapjs.git"
   }
 }

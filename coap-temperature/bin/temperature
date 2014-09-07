@@ -1,6 +1,4 @@
 #!/usr/bin/env node
 
 var app = require('../app/server');
-app.listen({
-  port: 9000
-});
+app.listen();
