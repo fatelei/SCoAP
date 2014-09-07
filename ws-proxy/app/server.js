@@ -128,7 +128,7 @@ io.of('/coap')
     if (query.length !== 0) {
       options.path = options.path + '?' + query;
     }
-    console.log(options.path);
+
     if (packet.type.confirm) {
       options.type = 'confirmable';
     } else if (packet.type.unconfirm) {
@@ -141,7 +141,6 @@ io.of('/coap')
         console.error(err);
         socket.emit('error', err.message);
       } else {
-        console.log(JSON.parse(result));
         socket.emit('aircondition', {data: result});
       }
     });
