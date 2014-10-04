@@ -3,7 +3,22 @@
  */
 
 var CoAPServer = require('coapjs').CoAPServer;
+var etcd = require('nodejs-etcd');
 var isOpen = false;
+var e = new etcd({
+  url: 'http://127.0.0.1:4001'
+});
+
+e.write({
+  key: 'aircondition.iot.fatelei',
+  value: 'localhost:9001'
+}, function (e, r, b) {
+  if (e) {
+    console.error(e);
+  } else {
+    console.info('register success');
+  }
+});
 
 var aircondition = function(req, res, callback) {
   var open = req.params.open;

@@ -6,17 +6,11 @@ var server = require('http').Server()
 var io = require('socket.io')(server);
 var IncomeMessage = require('coap-message').IncomeMessage;
 var CoAPClient = require('coapjs').CoAPClient;
+var etcd = require('nodejs-etcd');
+var e = new etcd({
+  url: 'http://127.0.0.1:4001'
+});
 
-var serverDns = {
-  'temperature.iot.fatelei': {
-    host: 'localhost',
-    port: 9000
-  },
-  'aircondition.iot.fatelei': {
-    host: 'localhost',
-    port: 9001
-  }
-};
 
 var convert = function(data) {
   var view = new Uint8Array(data);
@@ -52,96 +46,113 @@ var getCoapMethod = function(code) {
 };
 
 io.of('/coap')
-  .on('connection', function(socket) {
+  .on('connection', function (socket) {
   console.log('A new client connected');
-  socket.on('temperature', function(data) {
+  socket.on('temperature', function (data) {
     var tmp = convert(data);
    
     var hostname = tmp[0];
     var payload = tmp[1];
 
-    var host = serverDns[hostname].host;
-    var port = serverDns[hostname].port;
-    var incomeMessage = new IncomeMessage(payload);
-    var packet = incomeMessage.parse();
-  
-    var options = {};
-    var method = null;
-    options.host = host;
-    options.port = port;
-    options.method = getCoapMethod(packet.code);
-
-    paths = [];
-    for (var i = 0; i < packet.options.length; i++) {
-      if (packet.options[i].type === 'Uri-Path') {
-        paths.push(packet.options[i].value);
-      }
-    }
-    options.path = paths.join('/');
-
-    if (packet.type.confirm) {
-      options.type = 'confirmable';
-    } else if (packet.type.unconfirm) {
-      options.type = 'unconfirmable';
-    }
-
-    var client = new CoAPClient();
-    client.request(options, function(err, result) {
+    e.read({key: '/' + hostname}, function (err, result, body) {
       if (err) {
-        console.error(err);
-        socket.emit('error', err.message);
+        socket.emit('error', err.message); 
       } else {
-        console.log(result);
-        socket.emit('temperature', {curtemperature: result});
+        body = JSON.parse(body);
+        var address = body.node.value;
+        var host = address.split(':')[0];
+        var port = parseInt(address.split(':')[1]);
+        var incomeMessage = new IncomeMessage(payload);
+        var packet = incomeMessage.parse();
+      
+        var options = {};
+        var method = null;
+        options.host = host;
+        options.port = port;
+        options.method = getCoapMethod(packet.code);
+
+        paths = [];
+        for (var i = 0; i < packet.options.length; i++) {
+          if (packet.options[i].type === 'Uri-Path') {
+            paths.push(packet.options[i].value);
+          }
+        }
+        options.path = paths.join('/');
+
+        if (packet.type.confirm) {
+          options.type = 'confirmable';
+        } else if (packet.type.unconfirm) {
+          options.type = 'unconfirmable';
+        }
+
+        var client = new CoAPClient();
+        client.request(options, function (err, result) {
+          if (err) {
+            console.error(err);
+            socket.emit('error', err.message);
+          } else {
+            console.log(result);
+            socket.emit('temperature', {curtemperature: result});
+          }
+        });
+
       }
     });
   });
 
-  socket.on('aircondition', function(data) {
+  socket.on('aircondition', function (data) {
     var tmp = convert(data);
     var hostname = tmp[0];
     var payload = tmp[1];
 
-    var host = serverDns[hostname].host;
-    var port = serverDns[hostname].port;
-    var incomeMessage = new IncomeMessage(payload);
-    var packet = incomeMessage.parse();
-    var options = {};
-    var method = null;
-    options.host = host;
-    options.port = port;
-    options.method = getCoapMethod(packet.code);
-
-    paths = [];
-    queries = [];
-    for (var i = 0; i < packet.options.length; i++) {
-      if (packet.options[i].type === 'Uri-Path') {
-        paths.push(packet.options[i].value);
-      } else if (packet.options[i].type === 'Uri-Query') {
-        queries.push(packet.options[i].value);
-      }
-    }
-
-    var query = queries.join('&');
-    options.path = paths.join('/');
-
-    if (query.length !== 0) {
-      options.path = options.path + '?' + query;
-    }
-
-    if (packet.type.confirm) {
-      options.type = 'confirmable';
-    } else if (packet.type.unconfirm) {
-      options.type = 'unconfirmable';
-    }
-
-    var client = new CoAPClient();
-    client.request(options, function(err, result) {
+    e.read({key: '/' + hostname}, function (err, result, body) {
       if (err) {
-        console.error(err);
         socket.emit('error', err.message);
       } else {
-        socket.emit('aircondition', {data: result});
+        body = JSON.parse(body);
+        var address = body.node.value;
+        var host = address.split(':')[0];
+        var port = parseInt(address.split(':')[1]);
+        var incomeMessage = new IncomeMessage(payload);
+        var packet = incomeMessage.parse();
+        var options = {};
+        var method = null;
+        options.host = host;
+        options.port = port;
+        options.method = getCoapMethod(packet.code);
+
+        paths = [];
+        queries = [];
+        for (var i = 0; i < packet.options.length; i++) {
+          if (packet.options[i].type === 'Uri-Path') {
+            paths.push(packet.options[i].value);
+          } else if (packet.options[i].type === 'Uri-Query') {
+            queries.push(packet.options[i].value);
+          }
+        }
+
+        var query = queries.join('&');
+        options.path = paths.join('/');
+
+        if (query.length !== 0) {
+          options.path = options.path + '?' + query;
+        }
+
+        if (packet.type.confirm) {
+          options.type = 'confirmable';
+        } else if (packet.type.unconfirm) {
+          options.type = 'unconfirmable';
+        }
+
+        var client = new CoAPClient();
+        client.request(options, function(err, result) {
+          if (err) {
+            console.error(err);
+            socket.emit('error', err.message);
+          } else {
+            socket.emit('aircondition', {data: result});
+          }
+        });
       }
     });
   });

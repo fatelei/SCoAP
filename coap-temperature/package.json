@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "coapjs": "git+ssh://git@github.com:fatelei/coapjs.git"
+    "coapjs": "git+ssh://git@github.com:fatelei/coapjs.git",
+    "nodejs-etcd": "*"
   }
 }
