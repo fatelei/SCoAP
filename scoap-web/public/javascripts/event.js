@@ -88,13 +88,11 @@ var offAirCondition = function(event) {
  */
 var initEventListener = function() {
   var getTemperature = document.getElementById('getTemperature');
-  var subTemperature = document.getElementById('subTemperature');
   var openAirCondition = document.getElementById('openAirCondition');
   var closeAirCondition = document.getElementById('closeAirCondition');
 
   // Add Listener
   getTemperature.addEventListener('click', fetchTemperature);
-  subTemperature.addEventListener('click', subscribeTemperatureChange);
   openAirCondition.addEventListener('click', onAirCondition);
   closeAirCondition.addEventListener('click', offAirCondition);
 };
