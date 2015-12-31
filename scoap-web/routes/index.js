@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { title: 'SCoAP Demo' });
+  res.render('index', { title: '受限应用 Web 管理界面' });
 });
 
 module.exports = router;
